@@ -258,4 +258,67 @@ var cul = {
       return {result: result, left_offset: left_offset, right_offset: right_offset};
     },
     linearPixels2Actual: function(length, coord){
-      return length * Math.abs(coord.actual[1] - coord.actual[0]
+      return length * Math.abs(coord.actual[1] - coord.actual[0]) / Math.abs(coord.display[1] - coord.display[0]);
+    },
+    linearActual2Display: function(val, coord){
+      return (val - coord.actual[0]) * (coord.display[1] - coord.display[0]) / (coord.actual[1] - coord.actual[0]) + coord.display[0];
+    },
+    linearDisplay2Actual: function(pos, coord){
+      return (pos - coord.display[0]) * (coord.actual[1] - coord.actual[0]) / (coord.display[1] - coord.display[0]) + coord.actual[0];
+    },
+    seekNeatPoints: function(range, count){
+        var diff = range[1] - range[0];
+        if (!diff) diff = 0.001;
+
+        var precision = 1;
+        if (diff > 1){
+            while (diff / precision > 10){
+              precision *= 10;
+            }
+            precision /= 10;
+        } else {
+            while (diff / precision < 10){
+              precision /= 10;
+            }
+        }
+        var multiples = [1, 2, 5, 10, 20, 50];
+        var points = [];
+        multiples.forEach(function(multiple){
+            var interval = multiple * precision;
+            if (!interval) return;
+
+            var new_range = [];
+            var x = 0;
+            if (range[1] < 0){
+                while (x >= range[0]){
+                  if (x <= range[1])
+                      new_range.push(x);
+                  x -= interval;
+                }
+            } else if (range[0] > 0){
+                while (x <= range[1]){
+                  if (x >= range[0])
+                      new_range.push(x);
+                  x += interval;
+                }
+            } else {
+                x -= interval;
+                while (x >= range[0]){
+                  new_range.push(x);
+                  x -= interval;
+                }
+                x = 0;
+                while (x <= range[1]){
+                  new_range.push(x);
+                  x += interval;
+                }
+            }
+
+            points.push(new_range);
+        });
+
+        if (!points.length)
+          return [];
+
+        if (points[points.length - 1].length === 3)
+     
