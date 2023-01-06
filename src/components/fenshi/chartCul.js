@@ -321,4 +321,78 @@ var cul = {
           return [];
 
         if (points[points.length - 1].length === 3)
-     
+            points.push([points[points.length - 1][1]]);
+
+        for (var i = 0; i < points.length - 1; i++){
+            if (points[i].length === count) {
+                return points[i];
+            } else if (points[i + 1].length < count) {
+                return points[i + 1];
+            }
+        }
+        return points[points.length - 1];
+    },
+    calcYRange: {
+      candlestick: function(data, fields){
+        // LOG.EXIST(data, 'data');
+        // LOG.EXIST(fields, 'fields');
+
+        var y_max = Number.MIN_VALUE;
+        var y_min = Number.MAX_VALUE;
+
+        data.forEach(function(item){
+          var h = item[fields.h];
+          var l = item[fields.l];
+
+          if (h > y_max) y_max = h;
+          if (l < y_min) y_min = l;
+        });
+
+        return [y_min, y_max];
+      },
+      line: function(data, fields){
+        var y_max = Number.MIN_VALUE;
+        var y_min = Number.MAX_VALUE;
+        data.forEach((item) => {
+          var val = item[fields.val_index];
+          if (val > y_max) y_max = val;
+          if (val < y_min) y_min = val;
+        })
+
+        return [y_min, y_max];
+      },
+      column: function(data, fields){
+        var y_max = Number.MIN_VALUE;
+        var y_min = Number.MAX_VALUE;
+
+        data.forEach(function(item){
+          var val = item[fields.val_index];
+
+          if (val > y_max) y_max = val;
+          if (val < y_min) y_min = val;
+        });
+
+        return [y_min, y_max];
+      }
+    },
+    calcYRangeNew: {
+      candlestick: function(data, fields){
+        // LOG.EXIST(data, 'data');
+        // LOG.EXIST(fields, 'fields');
+
+        var y_max = Number.MIN_VALUE;
+        var y_min = Number.MAX_VALUE;
+
+        data.forEach(function(item){
+          fields.map(field => {
+            var h = field.h ? item[field.h] : item[field.val_index];
+            var l = field.l ? item[field.l] : item[field.val_index];
+
+            if (h > y_max) y_max = h;
+            if (l < y_min) y_min = l;
+          })
+        });
+
+        return [y_min, y_max];
+      },
+      li
