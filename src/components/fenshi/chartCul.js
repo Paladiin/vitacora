@@ -130,4 +130,78 @@ var cul = {
       var target = index + (Math.abs(n) - 1) * (n > 0 ? 1 : -1);
       if (target < 0)
         target = 0;
-      
+      else if (target > data.length - 1)
+        target = data.length - 1;
+
+      while (index !== target){
+        // LOG.MARK('iterOffsetN-0');
+        callback(data[index]);
+        index += n > 0 ? 1 : -1;
+      }
+
+      callback(data[index]);
+    },
+    leftPad: function(n, width){
+      var zeros = [];
+      while (width--) {
+        // LOG.MARK('leftPad-0');
+        zeros.push(0);
+      }
+      return zeros.join('').slice(0, zeros.length - n.toString().length) + n;
+    },
+    rightPad: function(n, width){
+      var n_str = n.toString().replace('-', '');
+      var n_str_arr = n_str.split('.');
+      var precision = width - n_str_arr[0].length - 1;
+      return n.toFixed(precision >= 0 ? precision : 0);
+    },
+    distance: function(point1, point2){
+      return Math.sqrt(Math.pow(point2[0] - point1[0], 2) + Math.pow(point2[1] - point1[1], 2));
+    }
+  },
+  Draw: {
+    Basic: function(ctx, func){
+      ctx.save();
+      ctx.beginPath();
+      func(ctx);
+    },
+    Fill: function(ctx, func, style){
+      cul.Draw.Basic(ctx, func);
+
+      ctx.fillStyle = style || 'black';
+      ctx.fill();
+      ctx.closePath();
+      ctx.restore();
+    },
+    Stroke: function(ctx, func, style){
+      cul.Draw.Basic(ctx, func);
+      ctx.strokeStyle = style || 'black';
+      ctx.stroke();
+      ctx.closePath();
+      ctx.restore();
+    },
+    FillnStroke: function(ctx, func, fill_style, stroke_style){
+      cul.Draw.Basic(ctx, func);
+
+      ctx.fillStyle = fill_style || 'black';
+      ctx.strokeStyle = stroke_style || 'black';
+      ctx.fill();
+      ctx.stroke();
+      ctx.closePath();
+      ctx.restore();
+    },
+    Text: function(ctx, func, fill_style, font_style){
+      ctx.save();
+      if (font_style)
+        ctx.font = font_style;
+      ctx.fillStyle = fill_style || 'black';
+      func(ctx);
+      ctx.restore();
+    }
+  },
+  Coord: {
+    getDateStr: function(date, no_date, no_time){
+      if (typeof date === 'number')
+          date = new Date(date);
+
+      var date_str = cul.Math.leftPad(date.getMonth() + 1, 2) + '/' +
