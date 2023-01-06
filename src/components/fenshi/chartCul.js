@@ -395,4 +395,33 @@ var cul = {
 
         return [y_min, y_max];
       },
-      li
+      line: function(data, fields){
+        var y_max = Number.MIN_VALUE;
+        var y_min = Number.MAX_VALUE;
+        data.forEach((item) => {
+          fields.map(field => {
+            var val = item[field.val_index];
+            if (val > y_max) y_max = val;
+            if (val < y_min) y_min = val;
+          })
+        })
+        return [y_min, y_max];
+      },
+      column: function(data, fields){
+        var y_max = Number.MIN_VALUE;
+        var y_min = Number.MAX_VALUE;
+
+        data.forEach(function(item){
+          var val = item[fields.val_index];
+
+          if (val > y_max) y_max = val;
+          if (val < y_min) y_min = val;
+        });
+        return [y_min, y_max];
+      }
+    }
+
+  }
+};
+
+module.exports = cul;
