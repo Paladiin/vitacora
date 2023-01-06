@@ -204,4 +204,58 @@ var cul = {
       if (typeof date === 'number')
           date = new Date(date);
 
-      var date_str = cul.Math.leftPad(date.getMonth() + 1, 2) + '/' +
+      var date_str = cul.Math.leftPad(date.getMonth() + 1, 2) + '/' + cul.Math.leftPad(date.getDate(), 2);
+      var time_str = cul.Math.leftPad(date.getHours(), 2) + ':' + cul.Math.leftPad(date.getMinutes(), 2);
+
+      var result = (no_date ? '' : date_str) + ' ' + (no_time ? '' : time_str);
+      return result.trim();
+    },
+    // getDateStrFull: function(date){
+    //   if (typeof date === 'number')
+    //       date = new Date(date);
+    //       return date.format('YYYY/MM/DD')
+    // },
+    datafilterByTimeRanges: function(data, ranges, t_index){
+      var buckets = ranges.map(function(){return []});
+      var bucket_index = 0;
+      for (var i = 0; i < data.length; i++){
+        var item = data[i];
+        var time = item[t_index];
+
+        if (time >= ranges[bucket_index][0] &&
+            time <= ranges[bucket_index][1]){
+          buckets[bucket_index].push(item);
+        } else {
+          if (ranges[bucket_index + 1] && time >= ranges[bucket_index + 1][0]){
+            bucket_index += 1;
+            i--;
+          }
+        }
+      }
+
+      return buckets;
+    },
+
+    dataFilterByViewport: function(data, viewport, chart){
+      // LOG.EXIST(chart, 'chart');
+      var display_width = chart.origin_width - chart.style.padding.left - chart.style.padding.right;
+      var result = [];
+      var pointer_x = viewport.offset;
+      var left_offset = Number.MAX_VALUE;
+      var right_offset = Number.MIN_VALUE;
+      for (var l = data.length; l--;){
+        data[l].x = null;
+        if (pointer_x >= -2 && pointer_x <= display_width + 2){
+          data[l].x = display_width - pointer_x + chart.style.padding.left;
+          result.unshift(data[l]);
+          if (l > right_offset)
+            right_offset = l;
+          if (l < left_offset)
+            left_offset = l;
+        }
+        pointer_x += viewport.width;
+      }
+      return {result: result, left_offset: left_offset, right_offset: right_offset};
+    },
+    linearPixels2Actual: function(length, coord){
+      return length * Math.abs(coord.actual[1] - coord.actual[0]
