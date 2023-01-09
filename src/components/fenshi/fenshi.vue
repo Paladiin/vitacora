@@ -197,4 +197,52 @@ export default {
               }
             },
             label_color: '#999',
-   
+            pointer_length: 0,
+            bg_color: 'rgba(0,0,0,0)',
+            line_color: 'rgba(0,0,0,0)',
+            draw_frame: false
+          }
+        }
+      };
+      [this.canvas_el, this.ia_canvas_el, this.mid_canvas_el] = this.initCanvas(document.getElementById('XGBchart'), pattern)
+      this.genCtx()
+      this.Prepare(pattern)
+      this.genStyle()
+      this.rerender(true)
+      // this.events = genDefaultEvents.call(this)
+      // bindEvents.call(this)
+    },
+    initCanvas(div_el, pattern, no_render) {
+      var canvas_main = document.createElement('canvas');
+      var canvas_ia = document.createElement('canvas');
+      var canvas_mid = document.createElement('canvas');
+
+      canvas_main.width = canvas_ia.width = canvas_mid.width = div_el.clientWidth;
+      canvas_main.height = canvas_ia.height = canvas_mid.height = div_el.clientHeight;
+
+      canvas_main.style.position = canvas_ia.style.position = canvas_mid.style.position = 'absolute';
+      canvas_main.style.top = canvas_ia.style.top = canvas_mid.style.top = 0;
+      canvas_main.style.left = canvas_ia.style.left = canvas_mid.style.left = 0;
+
+      if (!div_el.style.position || div_el.style.position === 'static')
+        div_el.style.position = 'relative';
+
+      div_el.innerHTML = '';
+      div_el.appendChild(canvas_main);
+      div_el.appendChild(canvas_mid);
+      div_el.appendChild(canvas_ia);
+      return [canvas_main, canvas_ia, canvas_mid]
+    },
+    genCtx() {
+      var dpr = window.devicePixelRatio;
+      this.origin_width = this.canvas_el.width;
+      this.origin_height = this.canvas_el.height;
+      this.ctx = this.canvas_el.getContext('2d');
+      this.canvas_el.style.width = this.canvas_el.width + 'px';
+      this.canvas_el.style.height = this.canvas_el.height + 'px';
+      this.canvas_el.width *= dpr;
+      this.canvas_el.height *= dpr;
+      this.ctx.scale(dpr, dpr);
+
+      this.ia_ctx = this.ia_canvas_el.getContext('2d');
+      this.ia_canvas_el.style.width = this.ia_canvas_el.width +
