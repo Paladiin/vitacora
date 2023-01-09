@@ -307,4 +307,79 @@ export default {
             label_height: 20,
             label_bg: 'rgba(0,0,0,0)',
             label_color: 'rgba(0,0,0,0)',
-            
+            label_horiz_padding: 5,
+            pos_offset: {
+              vertical: {
+                x: 0,
+                y: 0,
+                width: 0
+              }, // 0 means auto
+              horizontal: {
+                x: 0,
+                y: 0,
+                width: 0
+              }
+            },
+            selected_point_color: ['rgba(38,165,225,0.2)', '#fff', 'rgba(38,165,225,1)']
+          },
+          grid: {
+            bg: '#fff',
+            limit: {
+              y: [2, 8]
+            },
+            color: {
+              x: '#f0f0f0',
+              y: '#f0f0f0'
+            },
+            span: {
+              x: 120,
+              y: 30
+            }
+          },
+          line_color_list: ['#fff', '#FFAE00', '#C291F2', '#4CA5FF', '#3DCFEE'],
+          axis: {
+            x_axis_pos: 1, // 1 means on bottom, -1 means on top
+            y_axis_pos: 1, // 1 means on right, -1 means on left
+            hide_candlestick_date: false,
+            hide_candlestick_time: false,
+            show_rate: false,
+            label_pos: {
+              x_axis: {
+                x: -35,
+                y: 20
+              },
+              y_axis: {
+                x: 5,
+                y: 4
+              }
+            },
+            label_color: '#555',
+            pointer_length: 0,
+            bg_color: 'rgba(0,0,0,0)',
+            line_color: 'rgba(0,0,0,0)',
+            draw_frame: false
+          }
+        },
+        data_style: {
+          base_value: '#2DB0F9',
+          candlestick: {
+            block: {
+              up: '#FF4040',
+              down: '#1EB955'
+            },
+            border: {
+              up: '#FF4040',
+              down: '#1EB955'
+            },
+            wick: {
+              up: '#FF4040',
+              down: '#1EB955'
+            }
+          },
+          OHLC: {
+            up: '#FF4040',
+            down: '#1EB955'
+          },
+          mountain: {
+            line_width: 1,
+            line_color: 'rgba(251,
