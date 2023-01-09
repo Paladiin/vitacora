@@ -245,4 +245,66 @@ export default {
       this.ctx.scale(dpr, dpr);
 
       this.ia_ctx = this.ia_canvas_el.getContext('2d');
-      this.ia_canvas_el.style.width = this.ia_canvas_el.width +
+      this.ia_canvas_el.style.width = this.ia_canvas_el.width + 'px';
+      this.ia_canvas_el.style.height = this.ia_canvas_el.height + 'px';
+      this.ia_canvas_el.width *= dpr;
+      this.ia_canvas_el.height *= dpr;
+      this.ia_ctx.scale(dpr, dpr);
+
+      this.mid_ctx = this.mid_canvas_el.getContext('2d');
+      this.mid_canvas_el.style.width = this.mid_canvas_el.width + 'px';
+      this.mid_canvas_el.style.height = this.mid_canvas_el.height + 'px';
+      this.mid_canvas_el.width *= dpr;
+      this.mid_canvas_el.height *= dpr;
+      this.mid_ctx.scale(dpr, dpr);
+    },
+    Prepare(pattern) {
+      this.defaults = this.DEFAULTS();
+      if (this.viewport && this.viewport.offset && this.viewport.width) {
+        ['price_precision', 'style', 'data_style', 'data_source'].forEach((key) => {
+          this[key] = pattern[key] || this.defaults[key];
+        })
+      } else {
+        ['viewport', 'price_precision', 'style', 'data_style', 'data_source'].forEach((key) => {
+          this[key] = pattern[key] || this.defaults[key];
+        })
+      }
+    },
+    DEFAULTS() {
+      return {
+        viewport: {
+          offset: 0,
+          width: 10
+        },
+        price_precision: 5,
+        style: {
+          font: {
+            family: 'Microsoft YaHei',
+            size: 14
+          },
+          padding: {
+            top: 1,
+            right: 70,
+            bottom: 28,
+            left: 1
+          },
+          wheel_zoom_step: 1,
+          linear_last_point: false,
+          tip: {
+            high_color: '#FF4040',
+            low_color: '#1EB955',
+            curr_price: {
+              line_width: 1,
+              line_color: 'rgba(0,0,0,0)',
+              label_bg: 'rgba(0,0,0,0)',
+              label_color: 'rgba(0,0,0,0)',
+              label_height: 20
+            }
+          },
+          crosshair: {
+            snap_to_close: false,
+            color: '#979797',
+            label_height: 20,
+            label_bg: 'rgba(0,0,0,0)',
+            label_color: 'rgba(0,0,0,0)',
+            
