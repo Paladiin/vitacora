@@ -122,4 +122,79 @@ export default {
             left: 1
           },
           wheel_zoom_step: 1,
-          lin
+          linear_last_point: false,
+          linear_name_label: true,
+          linear_label: {
+            height: 20,
+            width: 60,
+            left: 0,
+            font_color: '#ffffff',
+            font_size: 12,
+            font_style: '12px Microsoft YaHei'
+          },
+          xgb_style: true,
+          tip: {
+            high_color: '#FF4040',
+            low_color: '#1EB955',
+            curr_price: {
+              line_width: 1,
+              line_color: 'rgba(0,0,0,0)',
+              label_bg: 'rgba(0,0,0,0)',
+              label_color: 'rgba(0,0,0,0)',
+              label_height: 20
+            }
+          },
+          crosshair: {
+            snap_to_close: false,
+            color: '#979797',
+            label_height: 20,
+            label_bg: '#EFEFEF',
+            label_color: '#333',
+            label_horiz_padding: 5,
+            pos_offset: {
+              vertical: {
+                x: 60,
+                y: 0,
+                width: 0
+              }, // 0 means auto
+              horizontal: {
+                x: 0,
+                y: 6,
+                width: 0
+              }
+            },
+            selected_point_color: ['rgba(243, 86, 77,0.2)', 'rgba(243, 86, 77,1)']
+          },
+          grid: {
+            bg: this.themeType ? '#151928' : '#ffffff',
+
+            limit: {
+              y: [2, 6]
+            },
+            color: {
+              x: '#f0f0f0',
+              y: '#f0f0f0'
+            },
+            span: {
+              x: 120,
+              y: 30
+            }
+          },
+          axis: {
+            x_axis_pos: 1, // 1 means on bottom, -1 means on top
+            y_axis_pos: -1, // 1 means on right, -1 means on left
+            hide_candlestick_date: false,
+            hide_candlestick_time: false,
+            show_rate: false,
+            label_pos: {
+              x_axis: {
+                x: -35,
+                y: 20
+              },
+              y_axis: {
+                x: 60,
+                y: 4
+              }
+            },
+            label_color: '#999',
+   
