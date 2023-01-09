@@ -382,4 +382,57 @@ export default {
           },
           mountain: {
             line_width: 1,
-            line_color: 'rgba(251,
+            line_color: 'rgba(251, 89, 75, 0.8)',
+            gradient_up: 'rgba(251, 89, 75, 0.4)',
+            gradient_down: 'rgba(251, 89, 75, 0.02)'
+          }
+        }
+      };
+    },
+    genStyle() {
+      this.ctx.font = this.style.font.size + 'px ' + this.style.font.family;
+      this.ia_ctx.font = this.ctx.font;
+      this.style.padding.right_pos = this.origin_width - this.style.padding.right;
+      this.style.padding.bottom_pos = this.origin_height - this.style.padding.bottom;
+    },
+    saveTrend(payload) {
+      let newTrend = []
+      newTrend = payload[this.proCode]
+      if (newTrend) {
+        this.stockTrend = newTrend
+      }
+    },
+    savePre(payload) {
+      this.preValue = payload['pre_close_px']
+    },
+    rerender(force) {
+      if ((!force && +new Date() - this.state.ctx_clock <= 30) || this.changingData) return;
+      this.state.ready = 0;
+      this.state.ctx_clock = +new Date();
+      this.state.ready = 0;
+      this.clean();
+      if (this.data_source.time_ranges) {
+        this.genLinearCoord();
+        this.drawGrid()
+        this.drawLinearPrice();
+        this.drawIndicators();
+        this.drawAxis();
+      }
+      this.state.ready = 1;
+    },
+    clean() {
+      if (!this.ctx || !this.ia_ctx || !this.mid_ctx) return
+      this.ctx.clearRect(0, 0, this.origin_width, this.origin_height);
+      this.ia_ctx.clearRect(0, 0, this.origin_width, this.origin_height);
+      this.mid_ctx.clearRect(0, 0, this.origin_width, this.origin_height);
+      // let stockLabel = document.querySelectorAll('.fenshi-stock-label')
+      // for (let i = 0; i < stockLabel.length; i++) {
+      //   document.getElementById('XGBchart').removeChild(stockLabel[i])
+      // }
+    },
+    genLinearCoord() {
+      var self = this;
+      var fields = this.data_source.fields[0];
+      this.data_source.filtered_data_buckets = this.datafilterByTimeRanges(this.data_source.data,
+        this.data_source.time_ranges, fields.t);
+      // this.$store.commit('zhutiChart/setTime
