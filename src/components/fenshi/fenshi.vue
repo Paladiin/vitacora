@@ -435,4 +435,48 @@ export default {
       var fields = this.data_source.fields[0];
       this.data_source.filtered_data_buckets = this.datafilterByTimeRanges(this.data_source.data,
         this.data_source.time_ranges, fields.t);
-      // this.$store.commit('zhutiChart/setTime
+      // this.$store.commit('zhutiChart/setTimeRange', [this.data_source.time_ranges[0][0], this.data_source.time_ranges[this.data_source.time_ranges.length - 1][1]])
+      var y_max = Number.MIN_VALUE;
+      var y_min = Number.MAX_VALUE;
+      var y_actuals = this.data_source.filtered_data_buckets.map((bucket) => {
+        var result = chartCul.Coord.calcYRangeNew.line(bucket, this.data_source.fields);
+        if (result[0] === result[1]) {
+          result[0] -= result[0] * 0.001;
+          result[1] += result[1] * 0.001;
+        }
+        if (result[0] < y_min) y_min = result[0];
+        if (result[1] > y_max) y_max = result[1];
+        return result;
+      });
+      let absMax = Math.max(Math.abs(y_min), Math.abs(y_max))
+      absMax = Math.ceil(absMax * 100 * 10 / 4) / 250
+      y_min = -absMax
+      y_max = absMax
+      // calc the vertical padding of grid
+      // var vertical_padding = chartCul.Coord.linearPixels2Actual(self.style.grid.span.y * 2, {
+      //   display: [this.style.padding.bottom_pos, this.style.padding.top],
+      //   actual: [y_min, y_max]
+      // });
+      // y_min -= vertical_padding;
+      // y_max += vertical_padding;
+
+      var y_actual = [y_min, y_max];
+
+      // enlarge the actual range of vertical coord when base value line is specified
+      if (this.data_source.base_value !== undefined) {
+        var base_value = this.data_source.base_value;
+        var span = Math.max(Math.abs(base_value - y_max), Math.abs(base_value - y_min));
+        y_actual = [base_value - span, base_value + span];
+      }
+      // create coord
+      this.coord = {
+        x: {
+          display: [this.style.padding.left, this.style.padding.right_pos],
+          actual: [this.data_source.time_ranges[0][0], this.data_source.time_ranges[this.data_source.time_ranges.length - 1][1]]
+        },
+        y: {
+          display: [this.style.padding.bottom_pos, this.style.padding.top],
+          actual: y_actual
+        },
+        viewport: this.viewport,
+        coo
