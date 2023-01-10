@@ -479,4 +479,59 @@ export default {
           actual: y_actual
         },
         viewport: this.viewport,
-        coo
+        coord_width: (this.style.padding.right_pos - this.style.padding.left) / this.data_source.time_ranges.length
+      };
+      // each splitted coord
+      this.coords = this.data_source.time_ranges.map((range, index) => {
+        var left = self.style.padding.left + self.coord.coord_width * index;
+        var right = left + self.coord.coord_width;
+        return {
+          x: {
+            display: [left, right],
+            actual: [range[0], range[1]]
+          },
+          y: {
+            display: [self.style.padding.bottom_pos, self.style.padding.top],
+            actual: y_actuals[index]
+          }
+        };
+      });     
+      
+      // calc display position x of each visiable point
+      this.data_source.filtered_data_buckets.forEach((bucket, index) => {
+        bucket.forEach((item) => {
+          item.x = ~~chartCul.Coord.linearActual2Display(item[fields.t], self.coords[index].x);
+        });
+      });
+    },
+    datafilterByTimeRanges: function(data, ranges, t_index) {
+      var buckets = ranges.map(function() {
+        return []
+      });
+      var bucket_index = 0;
+      for (var i = 0; i < data.length; i++) {
+        var item = data[i];
+        var time = item[t_index];
+
+        if (time >= ranges[bucket_index][0] &&
+          time <= ranges[bucket_index][1]) {
+          buckets[bucket_index].push(item);
+        } else {
+          if (ranges[bucket_index + 1] && time >= ranges[bucket_index + 1][0]) {
+            bucket_index += 1;
+            i--;
+          }
+        }
+      }
+      return buckets;
+    },
+    drawGrid() {
+      var self = this;
+      // draw background
+      chartCul.Draw.Fill(this.ctx, (ctx) => {
+        ctx.rect(0, 0, self.origin_width, self.origin_height);
+      }, this.style.grid.bg);
+      // calchartCulate horizontal lines position
+      var y_num = ~~((this.coord.y.display[0] - this.coord.y.display[1]) / this.style.grid.span.y);
+      // console.log(y_num)
+      if (y_num > self.style.grid.limit.y[1]) y_num = self.style.grid.
