@@ -534,4 +534,53 @@ export default {
       // calchartCulate horizontal lines position
       var y_num = ~~((this.coord.y.display[0] - this.coord.y.display[1]) / this.style.grid.span.y);
       // console.log(y_num)
-      if (y_num > self.style.grid.limit.y[1]) y_num = self.style.grid.
+      if (y_num > self.style.grid.limit.y[1]) y_num = self.style.grid.limit.y[1];
+      if (y_num < self.style.grid.limit.y[0]) y_num = self.style.grid.limit.y[0];
+      var horiz_lines = [];
+
+      if (this.data_source.base_value === undefined) {
+        // no base value line specified
+        if (this.coord.y.actual[0] === this.coord.y.actual[1]) {
+          this.coord.y.actual[0] -= 0.001
+          this.coord.y.actual[1] += 0.001
+        }
+        horiz_lines = chartCul.Coord.seekNeatPoints(this.coord.y.actual, y_num + 1);
+        horiz_lines = [this.coord.y.actual[0], ...horiz_lines, this.coord.y.actual[1]]
+      } else {
+        // with base value line
+        var y_actual = this.coord.y.actual;
+        var base_value = this.data_source.base_value;
+        var span = (y_actual[1] - y_actual[0]) / 2;
+        horiz_lines = [y_actual[0], base_value];
+        while (horiz_lines.length < y_num) {
+          span /= 2;
+          for (var i = 0, limit = horiz_lines.length; i < limit; i++) {
+            horiz_lines.push(horiz_lines[i] + span);
+          }
+        }
+        horiz_lines.push(y_actual[1]);
+      }
+      horiz_lines = horiz_lines.sort((a, b) => a - b)
+      horiz_lines = horiz_lines.map((val) => {
+        return {
+          actual: val,
+          display: ~~chartCul.Coord.linearActual2Display(val, self.coord.y) + 0.5
+        };
+      });
+      // console.log(horiz_lines)
+      // draw horizontal lines
+      // chartCul.Draw.Stroke(this.ctx, (ctx) => {
+      //   let hlength = horiz_lines.length
+      //   horiz_lines.forEach((y, index) => {
+      //     // if (index == hlength - 1 && this.data_source.time_ranges) return
+      //     ctx.moveTo(self.style.padding.left, y.display);
+      //     ctx.lineTo(self.style.padding.right_pos + self.style.padding.right, y.display);
+      //   });
+      // }, this.style.grid.color.x);
+      this.coord.horiz_lines = horiz_lines;
+
+      // calculate vertical lines position
+      var vertical_lines = [];
+
+      if (this.data_source.time_ranges) {
+        // vertical grid line drawing for linear cha
