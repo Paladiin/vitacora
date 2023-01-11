@@ -583,4 +583,44 @@ export default {
       var vertical_lines = [];
 
       if (this.data_source.time_ranges) {
-        // vertical grid line drawing for linear cha
+        // vertical grid line drawing for linear chart
+        this.data_source.time_ranges.forEach((range, index) => {
+          vertical_lines.push({
+            display: ~~(self.style.padding.left + self.coord.coord_width * index) + 0.5,
+            actual: range[0]
+          });
+          // vertical_lines.push({display: ~~(self.style.padding.left + self.coord.coord_width * index + self.coord.coord_width / 2) + 0.5, actual: (range[0] + range[1]) / 2});
+          if (index === self.data_source.time_ranges.length - 1) {
+            vertical_lines.push({
+              display: self.style.padding.right_pos + 0.5,
+              actual: range[1]
+            });
+          }
+        });
+      }
+      vertical_lines = vertical_lines.sort(function(a, b) {
+        return a.actual - b.actual;
+      });
+      // chartCul.Draw.Stroke(this.ctx, (ctx) => {
+      //   vertical_lines.forEach((val, ind) => {
+      //     if (ind == 0 && this.data_source.time_ranges) return
+      //     if (ind == vertical_lines.length - 1) {
+      //       if (this.data_source.time_ranges) {
+      //         ctx.moveTo(self.style.padding.right_pos + self.style.padding.right, self.style.padding.top);
+      //         ctx.lineTo(self.style.padding.right_pos + self.style.padding.right, self.style.padding.bottom_pos);
+      //       } else {
+      //         ctx.moveTo(val.display, self.style.padding.top);
+      //         ctx.lineTo(val.display, self.style.padding.bottom_pos);
+      //       }
+      //     } else {
+      //       ctx.moveTo(val.display, self.style.padding.top);
+      //       ctx.lineTo(val.display, self.style.padding.bottom_pos);
+      //     }
+      //   });
+      // }, this.style.grid.color.y);
+      // }
+      var x_line_pos_op = self.style.axis.y_axis_pos === 1 ? self.style.padding.left : self.style.padding.right_pos + self.style.padding.right;
+      chartCul.Draw.Stroke(this.ctx, (ctx) => {
+        if (self.style.axis.draw_frame) {
+          ctx.moveTo(x_line_pos_op, self.style.padding.top);
+          ctx.lineTo(x_line_pos_op, 
