@@ -623,4 +623,61 @@ export default {
       chartCul.Draw.Stroke(this.ctx, (ctx) => {
         if (self.style.axis.draw_frame) {
           ctx.moveTo(x_line_pos_op, self.style.padding.top);
-          ctx.lineTo(x_line_pos_op, 
+          ctx.lineTo(x_line_pos_op, self.style.padding.bottom_pos);
+        }
+      }, this.style.grid.color.y);
+      this.coord.vertical_lines = vertical_lines;
+    },
+    drawLinearPrice() {
+      var self = this;
+      var fields = this.data_source.fields[0];
+
+      if (fields.type !== 'linear') return;
+
+      var points = [];
+
+      // points calculation
+      this.data_source.filtered_data_buckets.forEach(function(bucket, index) {
+        var bucket_points = [];
+        bucket.forEach(function(item) {
+          var x = item.x;
+          var y = ~~chartCul.Coord.linearActual2Display(item[fields.val_index], self.coord.y);
+
+          bucket_points.push([x, y]);
+        });
+        points.push(bucket_points);
+      });
+
+      // line drawing
+      chartCul.Draw.Stroke(self.ctx, function(ctx) {
+        ctx.lineWidth = self.data_style.mountain.line_width;
+
+        points.forEach(function(bucket_points) {
+          bucket_points.forEach(function(point, index) {
+            if (!index)
+              ctx.moveTo(point[0], point[1]);
+
+            ctx.lineTo(point[0], point[1]);
+          });
+        });
+      }, self.data_style.mountain.line_color);
+
+      // gradient drawing
+
+      var gradient = self.ctx.createLinearGradient(0, 0, 0, self.style.padding.bottom_pos - self.style.padding.top);
+      gradient.addColorStop(0, self.data_style.mountain.gradient_up);
+      gradient.addColorStop(1, self.data_style.mountain.gradient_down);
+      points.forEach((bucket_points) => {
+        if (bucket_points.length)
+          chartCul.Draw.Fill(self.ctx, (ctx) => {
+            ctx.moveTo(bucket_points[0][0], self.style.padding.bottom_pos);
+            bucket_points.forEach((point, index) => {
+              ctx.lineTo(point[0], point[1]);
+            });
+            ctx.lineTo(bucket_points[bucket_points.length - 1][0], self.style.padding.bottom_pos);
+            ctx.closePath();
+          }, gradient);
+      });
+
+      // current point
+      var 
