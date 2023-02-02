@@ -680,4 +680,53 @@ export default {
       });
 
       // current point
-      var 
+      var last_bucket = points[points.length - 1];
+      var last_point = last_bucket[last_bucket.length - 1];
+      this.data_source.last_point = last_point;
+    },
+    drawIndicators() {
+      if (this.changingData) return
+      var self = this;
+      let tempfenshiLabel = []
+      if (this.data_source.time_ranges) {
+        this.data_source.fields.forEach((item) => {
+          LinearIndicatorTypeFuncs[item.type] && LinearIndicatorTypeFuncs[item.type].call(self, item);
+          if (this.chartMode === 'fenshi') {
+            tempfenshiLabel.push(this.drawDivLabel(this.fenshiMap, item))
+          }
+        });
+        tempfenshiLabel = tempfenshiLabel.sort((a, b) => {
+          return a.pos.top - b.pos.top
+        })
+        this.drawLastDot()
+      }
+      for (let i = 0; i < tempfenshiLabel.length; i++) {
+        if (i != 0) {
+          if (tempfenshiLabel[i].pos.top - tempfenshiLabel[i - 1].pos.top < 20) {
+            tempfenshiLabel[i].pos.top = tempfenshiLabel[i - 1].pos.top + 20
+          }
+        }
+      }
+      this.fenshiLabel = tempfenshiLabel
+    },
+    drawLastDot() {
+      let data = this.data_source.data
+      if(new Date(data[0]).getHours == 15 && new Date(data[0]).getMinutes == 0) return
+      let lastData = data[data.length-1]
+      let radius = [6, 2.5];
+      let self = this
+      this.style.crosshair.selected_point_color.forEach(function(color, index){
+        chartCul.Draw.Fill(self.ia_ctx, function(ctx){
+          ctx.arc(lastData.x + 0.5,
+                  chartCul.Coord.linearActual2Display(lastData[1], self.coord.y) - 1.5,
+                  radius[index], 0, 2 * Math.PI);
+        }, color);
+      });
+    },
+    drawAxis() {
+      var self = this;
+      // fill padding places
+      chartCul.Draw.Fill(this.ctx, function(ctx) {
+        ctx.rect(0, 0, self.origin_width, self.style.padding.top);
+        ctx.rect(0, 0, self.style.padding.left, self.origin_height);
+        ctx.rect(self.style.padding.right_pos, 0, self.style.pad
