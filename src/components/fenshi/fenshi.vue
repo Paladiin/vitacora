@@ -816,4 +816,40 @@ export default {
             var width = self.style.padding.right_pos - self.style.padding.left;
             var display_range = [
               index * width / self.data_source.time_ranges.length + this.style.padding.left,
-     
+              (index + 1) * width / self.data_source.time_ranges.length + this.style.padding.left
+            ];
+            ctx.fillText(chartCul.Coord.getDateStr(range[0], true),
+              display_range[0] + (index == 1 ? 2.5 : 15),
+              y + self.style.axis.label_pos.x_axis.y * self.style.axis.x_axis_pos);
+            let text1 = index ? chartCul.Coord.getDateStr(range[1], true) : chartCul.Coord.getDateStr(range[1], true) + '/'
+            var str_width = ctx.measureText(text1).width;
+            // ctx.fillText(chartCul.Coord.getDateStr((range[0] + range[1]) / 2, true),
+            //   display_range[1] - str_width / 2,
+            //   y + self.style.axis.label_pos.x_axis.y * self.style.axis.x_axis_pos);
+            ctx.fillText(text1,
+              display_range[1] - str_width - (index == 1 ? 15 : -2.5),
+              y + self.style.axis.label_pos.x_axis.y * self.style.axis.x_axis_pos);
+          })
+        }
+        if (self.style.axis.show_rate) {
+          var rate_x = self.style.axis.y_axis_pos > 0 ? 0 : self.style.padding.right_pos;
+
+          self.coord.horiz_lines.forEach((y, index) => {
+            var val = ((y.actual - self.data_source.base_value) / self.data_source.base_value);
+            var x_offset = ctx.measureText(val.toFixed(2) + '%').width + self.style.axis.label_pos.y_axis.x;
+
+            var y_pos = y.display + self.style.axis.label_pos.y_axis.y;
+            if (y_pos < 10)
+              y_pos += 10;
+            if (y_pos > self.origin_height - 10)
+              y_pos -= 10;
+
+            if (val === 0)
+              ctx.fillText(val.toFixed(2) + '%',
+                rate_x + self.style.axis.pointer_length + x_offset * self.style.axis.y_axis_pos,
+                y_pos);
+            else {
+              rates[val > 0 ? 'up' : 'down'].push([(val * 100).toFixed(2) + '%',
+                rate_x + self.style.axis.pointer_length + x_offset * self.style.axis.y_axis_pos,
+                y_pos
+          
