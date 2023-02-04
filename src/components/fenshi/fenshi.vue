@@ -729,4 +729,41 @@ export default {
       chartCul.Draw.Fill(this.ctx, function(ctx) {
         ctx.rect(0, 0, self.origin_width, self.style.padding.top);
         ctx.rect(0, 0, self.style.padding.left, self.origin_height);
-        ctx.rect(self.style.padding.right_pos, 0, self.style.pad
+        ctx.rect(self.style.padding.right_pos, 0, self.style.padding.right, self.origin_height);
+        ctx.rect(0, self.style.padding.bottom_pos, self.origin_width, self.style.padding.bottom);
+      }, this.style.axis.bg_color);
+      var x = self.style.axis.y_axis_pos === 1 ? self.style.padding.right_pos : 0;
+      var x_line_pos = self.style.axis.y_axis_pos === 1 ? self.style.padding.right_pos : self.style.padding.left;
+      var x_line_pos_op = self.style.axis.y_axis_pos === 1 ? self.style.padding.left : self.style.padding.right_pos;
+      var y = self.style.axis.x_axis_pos === 1 ? self.style.padding.bottom_pos : self.style.padding.top;
+      var y_op = self.style.axis.x_axis_pos === 1 ? self.style.padding.top : self.style.padding.bottom_pos;
+
+      // draw axis lines
+      chartCul.Draw.Stroke(this.ctx, function(ctx) {
+        self.coord.horiz_lines.forEach(function(y, index) {
+          ctx.moveTo(x_line_pos, y.display);
+          ctx.lineTo(x_line_pos + self.style.axis.pointer_length * self.style.axis.y_axis_pos, y.display);
+        });
+
+        self.coord.vertical_lines.forEach(function(x) {
+          ctx.moveTo(x.display, y);
+          ctx.lineTo(x.display, y + self.style.axis.pointer_length * self.style.axis.x_axis_pos);
+        });
+
+        // draw axis line
+        ctx.moveTo(x_line_pos + 0.5, self.style.padding.top);
+        ctx.lineTo(x_line_pos + 0.5, self.style.padding.bottom_pos);
+
+        ctx.moveTo(self.style.padding.left, y + 0.5);
+        ctx.lineTo(self.style.padding.right_pos, y + 0.5);
+
+        if (self.style.axis.draw_frame) {
+          ctx.moveTo(x_line_pos_op, self.style.padding.top);
+          ctx.lineTo(x_line_pos_op, self.style.padding.bottom_pos);
+
+          ctx.moveTo(self.style.padding.left, y_op + 0.5);
+          ctx.lineTo(self.style.padding.right_pos, y_op + 0.5);
+        }
+
+        if (self.style.axis.show_rate) {
+          var rate_x = self.style.axis.y_axis_pos > 0 ? self.style.padding.left : self.style.padding.right_pos;
