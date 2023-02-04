@@ -767,3 +767,53 @@ export default {
 
         if (self.style.axis.show_rate) {
           var rate_x = self.style.axis.y_axis_pos > 0 ? self.style.padding.left : self.style.padding.right_pos;
+
+          ctx.moveTo(rate_x + 0.5, self.style.padding.top);
+          ctx.lineTo(rate_x + 0.5, self.style.padding.bottom_pos);
+
+          self.coord.horiz_lines.forEach(function(y) {
+            ctx.moveTo(rate_x, y.display);
+            ctx.lineTo(rate_x + self.style.axis.pointer_length * -self.style.axis.y_axis_pos, y.display);
+          });
+        }
+      }, self.style.axis.line_color);
+
+      // draw labels
+      var rates = {
+        up: [],
+        down: []
+      };
+      // 这快是y轴右边的刻度
+      chartCul.Draw.Text(this.ctx, (ctx) => {
+        let max = self.coord.horiz_lines.length
+        self.coord.horiz_lines.forEach((y, index) => {
+          // if (this.data_source.time_ranges && (index == 0 || index == max - 1)) return
+          var val = y.actual.toFixed(self.price_precision);
+          if (this.style.xgb_style) {
+            ctx.fillStyle = this.colorStr(val)
+            val = Number(val * 100).toFixed(2) + '%'
+          }
+          var x_offset = self.style.axis.label_pos.y_axis.x;
+
+          var y_pos = y.display + self.style.axis.label_pos.y_axis.y;
+          if (y_pos < 10)
+            y_pos += 10;
+          if (y_pos > self.origin_height - 10)
+            y_pos -= 10;
+          if (!self.data_source.time_ranges) {
+            ctx.textAlign = 'right'
+            ctx.fillText(val, x + self.style.axis.pointer_length + self.style.padding.right_pos + self.style.padding.right - 6, y_pos);
+          } else {
+            ctx.textAlign = 'right'
+
+            ctx.fillText(val, x + self.style.axis.pointer_length + self.style.padding.right_pos + self.style.padding.right - 6, y_pos);
+          }
+        });
+      })
+      chartCul.Draw.Text(this.ctx, (ctx) => {
+        if (self.data_source.time_ranges) {
+          self.data_source.time_ranges.forEach((range, index) => {
+            var width = self.style.padding.right_pos - self.style.padding.left;
+            var display_range = [
+              index * width / self.data_source.time_ranges.length + this.style.padding.left,
+     
