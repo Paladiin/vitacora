@@ -852,4 +852,40 @@ export default {
               rates[val > 0 ? 'up' : 'down'].push([(val * 100).toFixed(2) + '%',
                 rate_x + self.style.axis.pointer_length + x_offset * self.style.axis.y_axis_pos,
                 y_pos
-          
+              ])
+            }
+          });
+        }
+      }, this.style.axis.label_color);
+      for (var direction in rates) {
+        chartCul.Draw.Text(this.ctx, function(ctx) {
+          rates[direction].forEach(function(item) {
+            ctx.fillText(item[0], item[1], item[2]);
+          });
+        }, self.data_style.OHLC[direction]);
+      }
+    },
+    colorStr(n) {
+      return n == 0 ? '#919599' : n > 0 ? '#F3564D' : '#1CBF7B'
+    },
+    inStockTime() {
+      var today = new Date();
+      var localoffset = -(today.getTimezoneOffset() / 60);
+      var destoffset = 8;
+
+      var offset = destoffset - localoffset;
+      var time = new Date(new Date().getTime() + offset * 3600 * 1000)
+      return (time.getHours() > 9 && time.getHours() < 15 || (time.getHours() == 9 && time.getMinutes() >= 15) || (time.getHours() == 15 && time.getMinutes() <= 10)) && !isWeekend(time)
+    }
+  },
+  destroyed() {
+    clearInterval(this.timer)
+  }
+}
+</script>
+
+<style lang="css">
+.XGBchart-container {
+  width: 100%;
+}
+</style>
