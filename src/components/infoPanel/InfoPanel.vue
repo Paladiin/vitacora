@@ -37,4 +37,17 @@ export default {
     border-bottom: 1px solid #ECECEC;
     & > h2 {
       font-size: 30px;
-      font-weight: bol
+      font-weight: bold;
+      font-family: PingFangSC-Medium;
+      color: #F34A55;
+    }
+    & > span {
+      display: flex;
+      align-items: center;
+      font-family: PingFangSC-Regular;
+      font-size: 24px;
+      color: #999999;
+    }
+  }
+}
+</style>
