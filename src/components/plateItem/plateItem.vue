@@ -86,4 +86,67 @@ export default {
         .toLocaleString()
         .replace(/(:\d{1,2}$)|(\d{4}\/)|[\u4e00-\u9fa5]/g, "")
         .replace(/(\d{1}\/)/, "0$1")
-        .replace(/\/(\d{1}\s
+        .replace(/\/(\d{1}\s)/, "/0$1")
+        .replace(/\b(\d{1}:)/, "0$1");
+    }
+  },
+  components: {
+    StockTrend
+  }
+};
+</script>
+<style lang="scss" scoped>
+.plate-item {
+  padding: 34px 28px 24px;
+  &-line {
+    height: 1px;
+    background-color: #efefef;
+  }
+  dt {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    line-height: 32px;
+    margin-bottom: 16px;
+    .title {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    span {
+      background-image: linear-gradient(90deg, #ff3736 0%, #ff6461 100%);
+      text-align: center;
+      font-size: 24px;
+      margin-right: 8px;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: inline-block;
+      color: white;
+    }
+    span.gray {
+      background-image: none;
+      background-color: #7a8399;
+    }
+    h3 {
+      font-size: 32px;
+      color: #333333;
+    }
+    .time {
+      font-family: SFUIText-Regular;
+      font-size: 24px;
+      color: #bcbcbc;
+    }
+  }
+  &-desc {
+    color: #666666;
+    font-size: 28px;
+    font-family: PingFangSC-Regular;
+    line-height: 46px;
+    padding-bottom: 16px;
+    & > span {
+      color: #f34a55;
+    }
+  }
+}
+</style>
