@@ -95,4 +95,71 @@ $green:#4da370;
     }
     &-tags{
         display: flex;
-        flex-w
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-start;
+        li{
+            padding:0 12px;
+            line-height: 32px;
+            margin-right: 16px;
+            margin-bottom: 24px;
+            font-size: 24px;
+            color: #808080;
+            border: 1px solid #efefef;
+        }
+    }
+}
+</style>
+<script>
+// import format from "date-fns/format";
+
+export default {
+  data () {
+    return {
+    };
+  },
+  props: {
+    stocks: {
+      type: Array
+    }
+  },
+
+  created() {
+
+  },
+
+  mounted() {},
+
+  methods: {
+    colorName (rate) {
+      if (rate > 0) {
+        return 'color-red'
+      } else {
+        return 'color-green'
+      }
+    }
+  },
+
+  computed: {
+    createdTime() {
+      // 时间处理 暂用
+      let time = this.stocks[6]
+      return time.slice(10, 16)
+    },
+    rate() {
+      return this.stocks[3].pcp && this.stocks[3].pcp.toFixed(2)
+    },
+    status() {
+      return this.stocks[2]
+    },
+    tagList() {
+      return this.stocks[3].plates.map(
+        i => i.plate_name
+      )
+    }
+  },
+
+  components: {}
+
+}
+</script>
