@@ -1,0 +1,153 @@
+
+$night-deep: #0F1322;
+$night-light: #151928;
+$night-light-1: #191D2D;
+
+.night-theme {
+  // views subjectDetail
+  .subject-detail {
+    height: 100vh;
+    background: #151928;
+  }
+  .subject-detail-head {
+    background: $night-light-1;
+    border-bottom: 20px solid $night-deep;
+    .subject-detail-head-info-title {
+      border-bottom: 1px solid $night-light;
+      .subject-detail-head-info-title-name {
+        color: #ffffff;
+      }
+    }
+    .subject-detail-head-info-number {
+      color: #ffffff;
+      background: $night-light;
+    }
+    .subject-detail-head-chart {
+      background: $night-light;
+    }
+  }
+
+  .subject-detail-reason {
+    background: $night-light;
+    border-bottom: 20px solid $night-deep;
+  }
+
+  .subject-detail-longtou {
+    border-bottom: 20px solid $night-deep;
+  }
+
+  .subject-detail-information {
+    background: #151928;
+    .subject-detail-information-list {
+      & > li {
+        border-bottom: 1px solid #0F1322;
+      }
+    }
+  }
+
+  // component InformationItem
+  .information-item {
+    background: $night-light;
+
+    .information-item-desc {
+      color: #8D8E8F;
+    }
+    .information-item-title {
+      color: #ffffff;
+    }
+  }
+
+  // component InfoPanel
+  .info-panel {
+    .info-panel-header {
+      background: $night-light-1;
+      border-bottom: 1px solid #0F1322;
+    }
+  }
+
+  // component StockList
+  .stock-list {
+    background: #151928;
+    .stock-list-head {
+      background: $night-light-1;
+      color: #ffffff;
+      & > tr {
+        border-bottom: none;
+      }
+    }
+    .stock-list-body {
+      background: $night-light;
+      .stock-list-body-row {
+        border-bottom: 1px solid #10131F;
+        .name {
+          color: #ffffff;
+        }
+        .code {
+          color: #999999;
+        }
+      }
+    }
+  }
+
+  // views InfoDetail
+  .info-detail {
+    background: $night-light;
+    & > h1 {
+      color: #ffffff;
+    }
+    .info-detail-label {
+      & > span {
+        color: #2C344D;
+        background: #747989;
+      }
+    }
+    .info-detail-content {
+      color: #ffffff;
+    }
+    .info-detail-share {
+      background: #2C344D;
+    }
+  }
+
+  // views stocksListView
+  .stock-list-views {
+    background: #151928;
+  }
+  //view funlist
+  .fund-list-item{
+    p{
+      color:white!important;
+    }
+    dl{
+      dt, p,dd{
+        color:white;
+      }
+      
+    }
+  }
+  .subject-detail{
+    .fund-list-ul{
+      border-color: #0f1322!important;
+      background-color: #191d2d!important;
+    }
+  }
+  .subject-detail-related-fund{
+    border-color: #0f1322!important;
+  }
+  .attention{
+    background-color: #191d2d;
+    .plate-item-line{
+      background-color: #0f1322;
+    }
+    .plate-item{
+      dd{
+        color:white;
+      }
+      dt{
+        h3{
+          color: white;
+        }
+      }
+    }
+  }
+}
