@@ -90,4 +90,92 @@ export default {
           this.msgDetail = res.data
           this.stocks = this.msgDetail.stocks
           const params = extractSymbolToParams(this.stocks)
-          stocksApi.getStocksReal
+          stocksApi.getStocksReal(params).then(res => {
+            this.stocksPool = res.data.snapshot
+            this.fields = this.stocksPool.fields
+          })
+        }
+      })
+    },
+    redirectToDownload () {
+      const URL = 'http://www.gyzq.com.cn/gyzq/gydj/gydj.html'
+      window.location = URL
+    },
+    handleClick () {
+      const title = this.msgDetail.title
+      let ele = document.createElement('div')
+      ele.innerHTML = this.msgContent
+      const content = ele.innerText.slice(0, 40)
+      const url = `${location.origin}/guoyuan/jinrijihuih5/infoDetail/${this.msgId}?frombkj=${this.bkjId}&isShare=true`
+      if (versions().isAndroid) {
+        window.KDS_Native.share(title, content, url)
+      } else if (versions().isIOS) {
+        location.href = `KDS_Native://share:${title}:${content}:${url}`
+      }
+    },
+    showChangeFontButton () {
+      if (versions().isAndroid) {
+        window.KDS_Native.isShowChangeFontSizeButton('1')
+      } else if (versions().isIOS) {
+        location.href = `KDS_Native://isShowChangeFontSizeButton:1`
+      }
+    }
+  },
+  components: {
+    StockTrend
+  }
+}
+</script>
+
+<style lang="scss">
+.info-detail {
+  padding: 36px 0 90px 0;
+  min-height: 100vh;
+  & > h1 {
+    padding: 0 30px;
+    font-size: 44px;
+    font-family: PingFangSC-Medium;
+    line-height: 1.2;
+    color: #333333;
+  }
+  &-label {
+    padding: 0 30px;
+    margin-top: 38px;
+    margin-bottom: 44px;
+    & > span {
+      margin-right: 54px;
+      padding: 8px 30px;
+      border-radius: 4px;
+      color: #939393;
+      font-family: PingFangSC-Regular;
+      font-size: 24px;
+      background: #F7F7F7;
+    }
+  }
+  &-stocks {
+    padding: 0 30px;
+    margin-bottom: 42px;
+  }
+  &-content {
+    padding: 0 30px;
+    font-size: 32px;
+    line-height: 1.8;
+    color: #333333;
+    font-family: PingFangSC-Regular;
+    p {
+      margin-bottom: 32px;
+    }
+    img {
+      max-width: 100%;
+    }
+  }
+  .big {
+    font-size: 40px;
+  }
+  &-share {
+    position: fixed;
+    width: 100vw;
+    height: 80px;
+    background: #F6F6F6;
+    color: red;
+  
