@@ -178,4 +178,16 @@ export default {
     height: 80px;
     background: #F6F6F6;
     color: red;
-  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    font-family: PingFangSC-Regula;
+    bottom: 0;
+    i {
+      font-size: 42px;
+      margin-right: 16px;
+    }
+  }
+}
+</style>
