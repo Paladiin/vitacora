@@ -284,3 +284,254 @@ export default {
 
       var offset = destoffset - localoffset;
       var time = new Date(new Date().getTime() + offset * 3600 * 1000)
+      return (time.getHours() > 9 && time.getHours() < 15 || (time.getHours() == 9 && time.getMinutes() >= 15) || (time.getHours() == 15 && time.getMinutes() <= 10)) && !isWeekend(time)
+    },
+    loadMoreMsgs () {
+      if (this.isLoading) {
+        return false
+      }
+      this.isLoading = true
+      this.page++
+      stocksApi.getMoreMsgs(this.bkjId, this.page, this.limit).then(res => {
+        if (res.code === 20000) {
+          const newMsgs = res.data.messages
+          if (newMsgs.length > 0) {
+            let params1 = ''
+            newMsgs.forEach(sub => {
+              if (sub.stocks && sub.stocks.length) {
+                params1 += ',' + extractSymbolToParams(sub.stocks)
+              }
+            })
+            stocksApi.getStocksReal(params1.slice(1)).then(res => {
+              this.subMsgs = this.subMsgs.concat(newMsgs)
+              this.subMsgStocksPool = Object.assign(this.subMsgStocksPool, res.data.snapshot)
+            }).catch(e => {
+              console.log(e)
+            })
+          }
+          if (res.data.has_more) {
+            this.isLoading = false
+          }
+        }
+      })
+    },
+    handleMoreClick () {
+      // if (versions().isAndroid) {
+      //   this.$router.push(`/stockList/${this.bkjId}`)
+      // } else if (versions().isIOS) {
+      //   const url = `${location.origin}/guoyuan/jinrijihuih5/stockList/${this.bkjId}`
+      //   location.href = `KDS_Native://switchWebView:'':${url}`
+      // }
+        this.$router.push(`/stockList/${this.bkjId}`)
+
+    },
+    handleMoreFundsClick () {
+      if (!this.funds.length) return 
+        this.$router.push(`/relatedFunds/${this.bkjId}`)
+      // if (versions().isAndroid) {
+      //   this.$router.push(`/relatedFunds/${this.bkjId}`)
+      // } else if (versions().isIOS) {
+      //   const url = `${location.origin}/guoyuan/jinrijihuih5/relatedFunds/${this.bkjId}`
+      //   location.href = `KDS_Native://switchWebView:'':${url}`
+      // }
+    },
+    handleItemClick (val) {
+        this.$router.push(`/infoDetail/${val.msg_id}?frombkj=${this.bkjId}`)
+
+      // if (versions().isAndroid) {
+      //   this.$router.push(`/infoDetail/${val.msg_id}?frombkj=${this.bkjId}`)
+      // } else if (versions().isIOS) {
+      //   const url = `${location.origin}/guoyuan/jinrijihuih5/infoDetail/${val.msg_id}?frombkj=${this.bkjId}`
+      //   location.href = `KDS_Native://switchWebView:'':${url}`
+      // }
+    },
+    handleShareClick (val) {
+      if (!this.isLoadMsgEnd) {
+        return false
+      }
+      this.isLoadMsgEnd = false
+      stocksApi.getMsgDetail(val.msg_id).then(res => {
+        if (res.code === 20000) {
+          const title = res.data.title
+          let ele = document.createElement('div')
+          ele.innerHTML = res.data.content || res.data.summary
+          const content = ele.innerText.slice(0, 40)
+          const url = `${location.origin}/guoyuan/jinrijihuih5/infoDetail/${val.msg_id}?frombkj=${this.bkjId}&isShare=true`
+          if (versions().isAndroid) {
+            window.KDS_Native.share(title, content, url)
+          } else if (versions().isIOS) {
+            console.log('ios share')
+            console.log(`KDS_Native://share:${title}:${content}:${url}`)
+            location.href = `KDS_Native://share:${title}:${content}:${url}`
+            console.log('share end')
+          }
+          this.isLoadMsgEnd = true
+        }
+      }).catch(e => {
+        this.isLoadMsgEnd = true
+        console.log(e)
+      })
+    },
+    handleScroll () {
+      if (getScrollTop() + getWindowHeight() >= getScrollHeight() - 10) {
+        this.loadMoreMsgs()
+      }
+    },
+    countChangeNumber (stocks) {
+      const pcrIndex = this.getIndexByField('px_change_rate', this.fields)
+      const count = {
+        up: 0,
+        eq: 0,
+        down: 0
+      }
+      Object.keys(stocks).forEach(key => {
+        const changeRate = parseFloat(stocks[key][pcrIndex])
+        if (changeRate > 0) {
+          count.up++
+        } else if (changeRate < 0) {
+          count.down++
+        } else if (changeRate === 0){
+          count.eq++
+        }
+      })
+      return count
+    },
+    colorName (value) {
+      if (parseFloat(value) > 0) {
+        return 'color-red'
+      } else if (parseFloat(value) < 0) {
+        return 'color-green'
+      } else {
+        return 'color-gray'
+      }
+    },
+    getIndexByField (fieldName, fields) {
+      return fields && fields.length > 0 && fields.indexOf(fieldName)
+    },
+    getFundFlow(obj) {
+      if (!obj) {
+        return 0
+      }
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          const item = obj[key]
+          return (item.huge_buy ? item.huge_buy : 0) +
+            (item.large_buy ? item.large_buy : 0) +
+            (item.medium_buy ? item.medium_buy : 0) +
+            (item.small_buy ? item.small_buy : 0) -
+            (item.huge_sale ? item.huge_sale : 0) -
+            (item.large_sale ? item.large_sale : 0) -
+            (item.medium_sale ? item.medium_sale : 0) -
+            (item.small_sale ? item.small_sale : 0)
+        }
+      }
+    }
+  },
+  components: {
+    InformationItem,
+    InfoPanel,
+    StockList,
+    FenShi,
+    fundList
+  }
+}
+</script>
+
+<style lang="scss">
+.subject-detail {
+  background: #ffffff;
+  .color-red {
+    color: #F34A55;
+  }
+  .color-gray {
+    color: #999999;
+  }
+  .color-green {
+    color: #54B88E;
+  }
+  &-related-fund{
+    border-bottom: 20px solid #f6f6f6;
+  }
+  &-head {
+    border-bottom: 20px solid #F6F6F6;
+    &-info {
+      &-title {
+        padding: 0 18px;
+        height: 88px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 30px;
+        font-family: PingFangSC-Medium;
+        color: #332D2D;
+        font-weight: bold;
+        border-bottom: 1px solid #EFEFEF;
+        &-name {
+          display: flex;
+          align-items: center;
+          height: 32px;
+          border-left: 8px solid #F34A55;
+          text-indent: 12px;
+        }
+      }
+      &-number {
+        padding: 0 18px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 24px;
+        font-family: PingFangSC-Regular;
+        height: 78px;
+        line-height: 78px;
+        color: #333333;
+        em {
+          padding-left: 8px;
+        }
+      }
+    }
+    &-chart {
+      text-align: right;
+      padding-bottom: 16px;
+      padding-right: 12px;
+      font-size: 24px;
+      font-family: PingFangSC-Regular;
+      color: #F34A55;
+    }
+  }
+
+  &-reason {
+    border-bottom: 20px solid #F6F6F6;
+    &-header {
+      padding: 30px 0 0 20px;
+      & > span {
+        background: linear-gradient(to right, #FF6461, #FF3736);
+        color: #ffffff;
+        border-radius: 8px;
+        font-family: PingFangSC-Regular;
+        font-size: 24px;
+        padding: 8px;
+      }
+    }
+  }
+
+  &-longtou {
+    border-bottom: 20px solid #F6F6F6;
+  }
+
+
+  &-information {
+    &-list {
+      & > li {
+        border-bottom: 1px solid #F6F6F6;
+      }
+      & > li:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+.no-info {
+      color:#333333;
+      text-align:center;
+      padding: 16px 0;
+    }
+}
+</style>
