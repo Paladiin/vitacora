@@ -47,4 +47,43 @@
         width: 490px;
         line-height: 44px;
         font-size: 26px;
-        flex-wrap: wra
+        flex-wrap: wrap;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        span{
+            width: 33%;
+            &.green{
+            color:#1cbf7b;
+        }
+        &.red{color:#f3564d;}
+        &.white{color:#e7e7e7;}
+            i{
+            color:#78808d;
+                margin-right: 6px;
+            }
+        }
+    }
+}
+</style>
+<script>
+export default {
+  data () {
+    return {
+    };
+  },
+  props: ['ssdata'],
+
+  created() {},
+
+  mounted() {
+  },
+
+  methods: {},
+
+  computed: {},
+
+  components: {}
+
+}
+</script>
